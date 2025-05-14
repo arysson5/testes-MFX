@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Testes MFX</title>
+</head>
+
+<body>
+
+    <h1>Escolha o que testar:</h1>
+
+    <div class="cards">
+        <div class="card-soap">
+            <h3>Descrever Numero</h3>
+            <p>O sistema consulta o sistema da Soap para Converter numero em Texto</p>
+            <div class="inputs">
+                <label for=""> Digite Um Numero:</label>
+                <input type="number" id="numero">
+                <button id="btn" onclick="convertNumber()">Converter</button>
+            </div>
+            <div class="resultado">
+                <p id="result"></p>
+            </div>
+        </div>
+
+        <div class="card-soap">
+            <h3>Processar matriz:</h3>
+            <p>O sistema processa uma matriz e retorna diversos calculos</p>
+            <div class="inputs">
+                <label for=""> Seria dificil enviar uma matriz então deixei uma como teste.</label>
+                <button id="btn" onclick="matrixProcess()">Processar Matriz</button>
+            </div>
+            <div class="resultado">
+                <p id="resultmatriz"></p>
+            </div>
+        </div>
+
+        <div class="card-soap">
+            <h3>Operações de Data:</h3>
+            <p>Insira as datas e parâmetros para realizar operações de data</p>
+            <div id="date-process">
+            <div class="inputs">
+                <div>
+                <label for="date1">Data 1:</label>
+                <input type="date" id="date1">
+      
+                <label for="date2">Data 2:</label>
+                <input type="date" id="date2">
+            </div>
+            <div>
+                <label for="daysToAdd">Dias para adicionar:</label>
+                <input type="number" id="daysToAdd" value="0">
+            </div>
+            <div>
+                <label for="targetTimeZone">Fuso Horário:</label>
+                <select id="targetTimeZone">
+    <option value="America/Sao_Paulo">São Paulo</option>
+    <option value="America/New_York">Nova York</option>
+    <option value="Europe/London">Londres</option>
+    <option value="Asia/Tokyo">Tóquio</option>
+    <option value="Australia/Sydney">Sydney</option>
+   
+</select>
+</div>
+<div>
+                <label for="format">Formato:</label>
+                <select id="format">
+                    <option value="short">Curto</option>
+                    <option value="medium">Médio</option>
+                    <option value="long" selected>Longo</option>
+                </select>
+            </div>
+                <button id="btn" onclick="dateOperationsProcess()">Processar Data</button>
+            </div>
+
+            <div class="resultado">
+                <p id="resultdate"></p>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script src="convertNumberToWords.js"></script>
+    <script src="processMatrix.js"></script>
+    <script src="dateOperations.js"></script>
+    <script>
+        async function convertNumber() {
+            var number = document.getElementById('numero').value;
+            if (number === '') {
+                document.getElementById('result').innerHTML = "Digite um numero";
+                return;
+            }
+            if (number < 0) {
+                document.getElementById('result').innerHTML = "Digite um numero positivo";
+                return;
+            }
+            try {
+                let convert = await convertNumberToWords(number);
+                document.getElementById('result').innerHTML = convert;
+            } catch (error) {
+                document.getElementById('result').innerHTML = "Erro: " + error;
+            }
+        }
+
+        function matrixProcess() {
+            var matriz = [
+                [1, 2, 3, 4, 5],
+                [6, 7, 8, 9, 10],
+                [11, 12, 13, 14],
+            ]
+            let result = processMatrix(matriz);
+            result = JSON.stringify(result);
+            matriz = JSON.stringify(matriz);
+            result = "Matriz de exemplo: " + matriz + "<br>" + "Resultado: " + result;
+            document.getElementById('resultmatriz').innerHTML = result;
+        }
+
+        function dateOperationsProcess() {
+            const date1 = document.getElementById('date1').value;
+            const date2 = document.getElementById('date2').value;
+            const daysToAdd = parseInt(document.getElementById('daysToAdd').value, 10);
+            const targetTimeZone = document.getElementById('targetTimeZone').value;
+            const format = document.getElementById('format').value;
+
+            if (!date1 || !date2) {
+                document.getElementById('resultdate').innerHTML = "Por favor, insira ambas as datas.";
+                return;
+            }
+
+            const params = {
+                date1: date1,
+                date2: date2,
+                daysToAdd: daysToAdd,
+                targetTimeZone: targetTimeZone,
+                format: format
+            };
+
+            const result = dateOperations(params);
+            document.getElementById('resultdate').innerHTML = `
+                Dias entre: ${result.daysBetween}<br>
+                Nova data: ${result.newDate}<br>
+                Data convertida para fuso horário: ${result.convertedTimeZone}<br>
+                Data formatada: ${result.formattedDate}
+            `;
+        }
+    </script>
+</body>
+
+</html>
